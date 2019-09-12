@@ -34,7 +34,7 @@ class LoginModel
     {
         // try find user(s) matching credentials from db
         $query = $this->connection->prepare('SELECT * FROM users WHERE username = :username AND password = :password');
-        $query->execute(['username' => $username, 'password' => $this->model->hash($password)]);
+        $query->execute(['username' => $username, 'password' => $this->hash($password)]);
         $numUsers = $query->rowCount();
 
         // technically, should only be exactly 1 user in table...
