@@ -25,4 +25,5 @@ $layout = new LayoutView();
 $mainPage = (isset($_GET['register'])) ? $registerPage : $loginPage;
 
 // render page using layout view
-$layout->render(false, $mainPage, $dateTime);
+$isLoggedIn = ($loginController->currentUser);
+$layout->render($isLoggedIn, $mainPage, $dateTime);

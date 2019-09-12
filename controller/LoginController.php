@@ -1,17 +1,23 @@
 <?php
 
-require_once "Store.php";
+require_once "./model/SessionStoreModel.php";
 require_once "./model/LoginModel.php";
 
 class LoginController
 {
     private $error;
     private $model;
+    public $currentUser;
 
     public function __construct()
     {
         $this->model = new LoginModel();
         $this->error = false;
+
+        // TODO: use session..
+        if (isset($_SESSION['username'])) {
+            $this->currentUser = $_SESSION['username'];
+        }
 
         // logout
         // TODO: move to model method
@@ -27,7 +33,7 @@ class LoginController
         }
 
         // check if we have POST data
-        if (!empty($_POST)) {
+        if (isset($_POST) && isset($_POST['LoginView::Login'])) {
 
             // login
             $username = $_POST['LoginView::UserName'];
@@ -47,12 +53,15 @@ class LoginController
             }
 
             // perform login
+            $this->currentUser = $username; // << tamp...
             if ($this->model->login($username, $password)) {
                 // (user is logged-in)
                 // ? TODO: need to redirect ?
             } else {
                 $this->error = "Wrong name or password";
             }
+        } else {
+            // empty POST; should show form
         }
     }
 

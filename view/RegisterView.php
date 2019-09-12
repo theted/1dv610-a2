@@ -23,7 +23,7 @@ class RegisterView
           <form action='?register' method='post' enctype='multipart/form-data'>
             <fieldset>
             <legend>Register new user</legend>
-              <p id='RegisterView::Message'>$message</p>
+              <p id='RegisterView::Message' class='error'>$message</p>
 
               <label for='RegisterView::UserName' >Username:</label>
               <input type='text' size='20' name='RegisterView::UserName' id='RegisterView::UserName' value='' />

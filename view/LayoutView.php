@@ -17,7 +17,6 @@ class LayoutView
 
 				<div class="container">
 						' . $v->response() . '
-
 						' . $dtv->show() . '
 				</div>
 				</body>
@@ -27,10 +26,7 @@ class LayoutView
 
     private function renderIsLoggedIn($isLoggedIn)
     {
-        if ($isLoggedIn) {
-            return '<h2>Logged in</h2>';
-        } else {
-            return '<h2>Not logged in</h2>';
-        }
+        $msg = ($isLoggedIn) ? 'Logged in' : 'Not logged in';
+        return "<h2>$msg</h2>";
     }
 }

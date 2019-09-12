@@ -2,15 +2,12 @@
 
 require_once 'DatabaseModel.php';
 
-const SALT = "@don't-use-just-ordinary-md5!";
-
 class LoginModel
 {
     public function __construct()
     {
         // setup db connection
-        $this->connection = new DatabaseModel();
-        $this->connection = $this->connection->connection;
+        $this->db = new DatabaseModel();
     }
 
     public function login($username, $password)
@@ -33,7 +30,7 @@ class LoginModel
     public function authenticate($username, $password)
     {
         // try find user(s) matching credentials from db
-        $query = $this->connection->prepare('SELECT * FROM users WHERE username = :username AND password = :password');
+        $query = $this->db->connection->prepare('SELECT * FROM users WHERE username = :username AND password = :password');
         $query->execute(['username' => $username, 'password' => $this->hash($password)]);
         $numUsers = $query->rowCount();
 

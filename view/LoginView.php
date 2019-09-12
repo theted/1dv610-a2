@@ -30,10 +30,6 @@ class LoginView
         $message = $this->error;
         $response = "";
 
-        if ($this->error) {
-            $response .= "<p class=\"error\">$this->error</p>";
-        }
-
         // handle user logged-in state
         // TODO: handle state in separate model
         if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn']) {
@@ -78,7 +74,7 @@ class LoginView
 			<form method="post" >
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
-					<p id="' . self::$messageId . '">' . $message . '</p>
+					<p id="' . self::$messageId . '" class="error">' . $message . '</p>
 
 					<label for="' . self::$name . '">Username :</label>
 					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="" />
