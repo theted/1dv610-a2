@@ -1,6 +1,7 @@
 <?php
 
-require_once "Store.php";
+require_once "model/SessionStoreModel.php";
+require_once "model/UserModel.php";
 require_once "model/RegisterModel.php";
 require_once 'model/DatabaseModel.php';
 
@@ -17,6 +18,7 @@ class RegisterController
         }
 
         $this->model = new LoginModel();
+        $this->userModel = new UserModel();
         $this->db = new DatabaseModel(); //->connection // TODO: init from outside?
         $this->error = false;
 
@@ -71,17 +73,29 @@ class RegisterController
             return false;
         }
 
-        // TODO: check if username already exists in db
+        // check if username already exists in db
+        $existingUser = $this->userModel->get($username);
 
+        // user exists
+        if (count($existingUser) > 0) {
+            $this->error = "Username already exists.";
+            return false;
+        }
+
+        // all is good!
         return true;
     }
 
     public function createUser($username, $password)
     {
         try {
+
+            // create user in db
             $result = $this->db->connection->prepare('INSERT INTO users (username, password) VALUES (:username,:password)');
             $result->execute(['username' => $username, 'password' => $this->model->hash($password)]);
+
             // now since the user is registered, we can actually log in
+            // TODO: set `Welcome` msg to user
             return $this->model->login($username, $password);
         } catch (\PDOException $e) {
             echo "ERROR! ";
