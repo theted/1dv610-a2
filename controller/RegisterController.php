@@ -78,10 +78,9 @@ class RegisterController
 
     public function createUser($username, $password)
     {
-
         try {
             $result = $this->db->connection->prepare('INSERT INTO users (username, password) VALUES (:username,:password)');
-            $result->execute(['username' => $username, 'password' => $password]);
+            $result->execute(['username' => $username, 'password' => $this->model->hash($password)]);
             // now since the user is registered, we can actually log in
             return $this->model->login($username, $password);
         } catch (\PDOException $e) {
