@@ -15,7 +15,7 @@ class LoginController
     // TODO: move all logic outta this constructor...
     public function __construct()
     {
-        $this->model = new LoginModel();
+        $this->loginModel = new LoginModel();
         $this->error = false;
 
         // TODO: use session..
@@ -31,11 +31,6 @@ class LoginController
             return true;
         }
 
-        // TODO: fix this; is redundant!
-        if (isset($_GET['register'])) {
-            return false;
-        }
-
         // check if we have POST data
         if (isset($_POST) && isset($_POST['LoginView::Login'])) {
 
@@ -48,7 +43,7 @@ class LoginController
             $this->username = $username;
 
             // validate user input
-            $validationResult = $this->model->validate($username, $password);
+            $validationResult = $this->loginModel->validate($username, $password);
 
             if ($validationResult !== true) {
                 $this->error = $validationResult;
@@ -59,9 +54,10 @@ class LoginController
             $this->currentUser = $username;
 
             // perform login
-            if ($this->model->login($username, $password)) {
+            if ($this->loginModel->login($username, $password)) {
                 // (user is logged-in)
                 // ? TODO: need to redirect ?
+                redirect('/');
             } else {
                 $this->error = "Wrong name or password";
             }
