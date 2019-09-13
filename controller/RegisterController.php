@@ -17,6 +17,11 @@ class RegisterController
             return false;
         }
 
+        // if user if logged-in, we should redirect
+        if (isset($_SESSION['username'])) {
+            redirect('/');
+        }
+
         $this->model = new LoginModel();
         $this->userModel = new UserModel();
         $this->db = new DatabaseModel(); //->connection // TODO: init from outside?
@@ -28,7 +33,6 @@ class RegisterController
             $this->registerUserIfValidInput();
         } else {
             // show form...
-            $this->error = "[form!]";
         }
     }
 
