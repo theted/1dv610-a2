@@ -16,6 +16,9 @@ class LoginView
     {
         // TODO: get input data..
         $this->error = $controller->getError();
+
+        // ! actual bad practise...
+        $this->controller = $controller;
     }
 
     /**
@@ -77,7 +80,7 @@ class LoginView
 					<p id="' . self::$messageId . '" class="error">' . $message . '</p>
 
 					<label for="' . self::$name . '">Username :</label>
-					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="" />
+					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->controller->username . '" />
 
 					<label for="' . self::$password . '">Password :</label>
 					<input type="password" id="' . self::$password . '" name="' . self::$password . '" />
