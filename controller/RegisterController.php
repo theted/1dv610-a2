@@ -12,18 +12,19 @@ class RegisterController
 
     public function __construct()
     {
-        // TODO: fix
+        // temp fix
         if (isset($_GET['register']) == false) {
             return false;
         }
 
-        // if user if logged-in, we should redirect
-        if (isset($_SESSION['username'])) {
-            redirect('/');
+        // redirect requests if user is logged in
+        if (isset($_SESSION['loggedIn'])) {
+            header('Location: /');
         }
 
         $this->model = new LoginModel();
         $this->userModel = new UserModel();
+        $this->registerModel = new RegisterModel();
         $this->db = new DatabaseModel(); //->connection // TODO: init from outside?
         $this->error = false;
 
@@ -50,61 +51,18 @@ class RegisterController
         $passwordRepeat = $_POST['RegisterView::PasswordRepeat'];
 
         // validate input
-        if ($this->validate($username, $password, $passwordRepeat)) {
+        $validationResult = $this->registerModel->validate($username, $password, $passwordRepeat);
+
+        if ($validationResult == true) {
             // validation pass; we can register the user in db
             // actually do the db register at this point
-            $this->createUser($username, $password);
+            $this->registerModel->createUser($username, $password);
+
+            // .. then we can redirect
+            header('Location: /');
         } else {
-            // validation failed; error property is set by validate method
-            return false;
-        }
-    }
-
-    public function validate($username, $password, $passwordRepeat)
-    {
-        if (strlen($username) < 3) {
-            $this->setError("Username has too few characters, at least 3 characters.");
-            return false;
-        }
-
-        if (strlen($password) < 6) {
-            $this->error = "Password has too few characters, at least 6 characters.";
-            return false;
-        }
-
-        if ($password !== $passwordRepeat) {
-            $this->error = "Passwords do not match.";
-            return false;
-        }
-
-        // check if username already exists in db
-        $existingUser = $this->userModel->get($username);
-
-        // user exists
-        if (count($existingUser) > 0) {
-            $this->error = "Username already exists.";
-            return false;
-        }
-
-        // all is good!
-        return true;
-    }
-
-    public function createUser($username, $password)
-    {
-        try {
-
-            // create user in db
-            $result = $this->db->connection->prepare('INSERT INTO users (username, password) VALUES (:username,:password)');
-            $result->execute(['username' => $username, 'password' => $this->model->hash($password)]);
-
-            // now since the user is registered, we can actually log in
-            // TODO: set `Welcome` msg to user
-            return $this->model->login($username, $password);
-        } catch (\PDOException $e) {
-            echo "ERROR! ";
-            print_r($e);
-            return false;
+            // validation failed; set error property
+            $this->error = $validationResult;
         }
     }
 
