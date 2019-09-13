@@ -9,6 +9,10 @@ class LoginController
     private $model;
     public $currentUser;
 
+    // temp
+    public $username;
+
+    // TODO: move all logic outta this constructor...
     public function __construct()
     {
         $this->model = new LoginModel();
@@ -40,20 +44,21 @@ class LoginController
             $password = $_POST['LoginView::Password'];
             // KeepMeLoggedIn ?
 
-            // TODO: clean up logic
+            // save current username state (if user needs it back in form...)
+            $this->username = $username;
 
-            if (!$username) {
-                $this->error = "Username is missing";
-                return true;
+            // validate user input
+            $validationResult = $this->model->validate($username, $password);
+
+            if ($validationResult !== true) {
+                $this->error = $validationResult;
+                return false;
             }
 
-            if (!$password) {
-                $this->error = "Password is missing";
-                return true;
-            }
+            // update user/state...
+            $this->currentUser = $username;
 
             // perform login
-            $this->currentUser = $username; // << tamp...
             if ($this->model->login($username, $password)) {
                 // (user is logged-in)
                 // ? TODO: need to redirect ?
@@ -62,6 +67,7 @@ class LoginController
             }
         } else {
             // empty POST; should show form
+            return true;
         }
     }
 

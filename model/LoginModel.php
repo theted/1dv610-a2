@@ -1,28 +1,25 @@
 <?php
 
+require_once 'config.php'; // ?
 require_once 'DatabaseModel.php';
+require_once 'SessionStoreModel.php';
 
 class LoginModel
 {
     public function __construct()
     {
-        // setup db connection
         $this->db = new DatabaseModel();
+        $this->Store = new SessionStore();
     }
 
     public function login($username, $password)
     {
         if ($this->authenticate($username, $password)) {
-            // TODO: separate into storage class
-            $_SESSION['loggedIn'] = true;
-            $_SESSION['username'] = $username;
-
-            // TODO: return true; model methods should not have
-            // side-effects like a page redirect!
-            redirect("/");
+            $this->Store->set('loggedIn', true);
+            $this->Store->set('username', $username);
+            return true;
         } else {
-            // login fail
-            echo " login FAIL for user \"$username\"!";
+            return "Login failed!";
         }
     }
 
@@ -36,6 +33,19 @@ class LoginModel
 
         // technically, should only be exactly 1 user in table...
         return ($numUsers > 0);
+    }
+
+    public function validate($username = false, $password = false)
+    {
+        if (!$username) {
+            return "Username is missing";
+        }
+
+        if (!$password) {
+            return "Password is missing";
+        }
+
+        return true;
     }
 
     public function hash(string $password)
