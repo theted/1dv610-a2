@@ -17,13 +17,21 @@ class LoginModel
         if ($this->authenticate($username, $password)) {
             $this->Store->set('loggedIn', true);
             $this->Store->set('username', $username);
+            $this->Store->set('message', 'Welcome');
             return true;
         } else {
             return "Login failed!";
         }
     }
 
-    // TODO: implement actual authentication..!
+    /**
+     * Authenticate user
+     *
+     * @param string $username
+     * @param string $password
+     * @return string Error
+     * @return bool Success
+     */
     public function authenticate($username, $password)
     {
         // try find user(s) matching credentials from db
@@ -35,6 +43,17 @@ class LoginModel
         return ($numUsers > 0);
     }
 
+    // validate input
+    // @return string error
+
+    /**
+     * Validate input
+     *
+     * @param string $username
+     * @param string $password
+     * @return string Error
+     * @return bool=true Validation pass
+     */
     public function validate($username = false, $password = false)
     {
         if (!$username) {
@@ -43,6 +62,11 @@ class LoginModel
 
         if (!$password) {
             return "Password is missing";
+        }
+
+        // ! temp
+        if (!$this->authenticate($username, $password)) {
+            return "Wrong name or password";
         }
 
         return true;
